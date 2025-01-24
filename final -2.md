@@ -30,7 +30,7 @@ sudo mysql -u root -p
 ```
 ```sql
 CREATE DATABASE opencart_db;
-CREATE USER 'opencart_user'@'localhost' IDENTIFIED BY 'opencart_user';
+CREATE USER 'opencart_user'@'localhost' IDENTIFIED BY 'opencart_password';
 GRANT ALL PRIVILEGES ON opencart_db.* TO 'opencart_user'@'localhost';
 FLUSH PRIVILEGES;
 EXIT;
@@ -58,10 +58,15 @@ sudo nano /etc/apache2/sites-available/opencart.conf
 Paste:
 ```
 <VirtualHost *:80>
+    ServerAdmin admin@yourdomain.com
     DocumentRoot /var/www/html
     <Directory /var/www/html/>
+        Options Indexes FollowSymLinks
         AllowOverride All
+        Require all granted
     </Directory>
+    ErrorLog ${APACHE_LOG_DIR}/opencart_error.log
+    CustomLog ${APACHE_LOG_DIR}/opencart_access.log combined
 </VirtualHost>
 ```
 Enable the site:
@@ -76,7 +81,9 @@ sudo systemctl restart apache2
 ### **7. Complete Installation**
 1. Open your browser:  
    `http://your-server-ip`
-2. Follow the setup wizard (enter database info and admin details).
+2. Follow the setup wizard:
+    - Enter database credentials created in Step 4.
+    - Set up an admin username and password.
 3. Delete the `install` folder:
    ```bash
    sudo rm -rf /var/www/html/install
@@ -92,5 +99,10 @@ sudo certbot --apache
 
 ---
 
-You're done! Access OpenCart at `http://your-server-ip/admin` to manage your store.
+You're done! Access OpenCart at `http://your-server-ip/admin` to start managing your store.  
 
+---
+![img.png](img.png)
+
+
+sudo mv /var/www/html/opencart/system/storage/ /var/www/storage
